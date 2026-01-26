@@ -12,9 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ImprintRouteImport } from './routes/imprint'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as SheetgenRouteRouteImport } from './routes/sheetgen/route'
 import { Route as ProductsRouteRouteImport } from './routes/products/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SheetgenIndexRouteImport } from './routes/sheetgen/index'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
+import { Route as SheetgenVampireRouteImport } from './routes/sheetgen/vampire'
+import { Route as SheetgenDndRouteImport } from './routes/sheetgen/dnd'
+import { Route as SheetgenCyberpunkRouteImport } from './routes/sheetgen/cyberpunk'
 import { Route as ProductsIdIndexRouteImport } from './routes/products/$id/index'
 
 const ImprintRoute = ImprintRouteImport.update({
@@ -32,6 +37,11 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SheetgenRouteRoute = SheetgenRouteRouteImport.update({
+  id: '/sheetgen',
+  path: '/sheetgen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsRouteRoute = ProductsRouteRouteImport.update({
   id: '/products',
   path: '/products',
@@ -42,10 +52,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SheetgenIndexRoute = SheetgenIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SheetgenRouteRoute,
+} as any)
 const ProductsIndexRoute = ProductsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ProductsRouteRoute,
+} as any)
+const SheetgenVampireRoute = SheetgenVampireRouteImport.update({
+  id: '/vampire',
+  path: '/vampire',
+  getParentRoute: () => SheetgenRouteRoute,
+} as any)
+const SheetgenDndRoute = SheetgenDndRouteImport.update({
+  id: '/dnd',
+  path: '/dnd',
+  getParentRoute: () => SheetgenRouteRoute,
+} as any)
+const SheetgenCyberpunkRoute = SheetgenCyberpunkRouteImport.update({
+  id: '/cyberpunk',
+  path: '/cyberpunk',
+  getParentRoute: () => SheetgenRouteRoute,
 } as any)
 const ProductsIdIndexRoute = ProductsIdIndexRouteImport.update({
   id: '/$id/',
@@ -56,10 +86,15 @@ const ProductsIdIndexRoute = ProductsIdIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/products': typeof ProductsRouteRouteWithChildren
+  '/sheetgen': typeof SheetgenRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/imprint': typeof ImprintRoute
+  '/sheetgen/cyberpunk': typeof SheetgenCyberpunkRoute
+  '/sheetgen/dnd': typeof SheetgenDndRoute
+  '/sheetgen/vampire': typeof SheetgenVampireRoute
   '/products/': typeof ProductsIndexRoute
+  '/sheetgen/': typeof SheetgenIndexRoute
   '/products/$id': typeof ProductsIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -67,17 +102,26 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/imprint': typeof ImprintRoute
+  '/sheetgen/cyberpunk': typeof SheetgenCyberpunkRoute
+  '/sheetgen/dnd': typeof SheetgenDndRoute
+  '/sheetgen/vampire': typeof SheetgenVampireRoute
   '/products': typeof ProductsIndexRoute
+  '/sheetgen': typeof SheetgenIndexRoute
   '/products/$id': typeof ProductsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/products': typeof ProductsRouteRouteWithChildren
+  '/sheetgen': typeof SheetgenRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/imprint': typeof ImprintRoute
+  '/sheetgen/cyberpunk': typeof SheetgenCyberpunkRoute
+  '/sheetgen/dnd': typeof SheetgenDndRoute
+  '/sheetgen/vampire': typeof SheetgenVampireRoute
   '/products/': typeof ProductsIndexRoute
+  '/sheetgen/': typeof SheetgenIndexRoute
   '/products/$id/': typeof ProductsIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -85,27 +129,48 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/products'
+    | '/sheetgen'
     | '/about'
     | '/blog'
     | '/imprint'
+    | '/sheetgen/cyberpunk'
+    | '/sheetgen/dnd'
+    | '/sheetgen/vampire'
     | '/products/'
+    | '/sheetgen/'
     | '/products/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/blog' | '/imprint' | '/products' | '/products/$id'
+  to:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/imprint'
+    | '/sheetgen/cyberpunk'
+    | '/sheetgen/dnd'
+    | '/sheetgen/vampire'
+    | '/products'
+    | '/sheetgen'
+    | '/products/$id'
   id:
     | '__root__'
     | '/'
     | '/products'
+    | '/sheetgen'
     | '/about'
     | '/blog'
     | '/imprint'
+    | '/sheetgen/cyberpunk'
+    | '/sheetgen/dnd'
+    | '/sheetgen/vampire'
     | '/products/'
+    | '/sheetgen/'
     | '/products/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProductsRouteRoute: typeof ProductsRouteRouteWithChildren
+  SheetgenRouteRoute: typeof SheetgenRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRoute
   ImprintRoute: typeof ImprintRoute
@@ -134,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sheetgen': {
+      id: '/sheetgen'
+      path: '/sheetgen'
+      fullPath: '/sheetgen'
+      preLoaderRoute: typeof SheetgenRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products': {
       id: '/products'
       path: '/products'
@@ -148,12 +220,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sheetgen/': {
+      id: '/sheetgen/'
+      path: '/'
+      fullPath: '/sheetgen/'
+      preLoaderRoute: typeof SheetgenIndexRouteImport
+      parentRoute: typeof SheetgenRouteRoute
+    }
     '/products/': {
       id: '/products/'
       path: '/'
       fullPath: '/products/'
       preLoaderRoute: typeof ProductsIndexRouteImport
       parentRoute: typeof ProductsRouteRoute
+    }
+    '/sheetgen/vampire': {
+      id: '/sheetgen/vampire'
+      path: '/vampire'
+      fullPath: '/sheetgen/vampire'
+      preLoaderRoute: typeof SheetgenVampireRouteImport
+      parentRoute: typeof SheetgenRouteRoute
+    }
+    '/sheetgen/dnd': {
+      id: '/sheetgen/dnd'
+      path: '/dnd'
+      fullPath: '/sheetgen/dnd'
+      preLoaderRoute: typeof SheetgenDndRouteImport
+      parentRoute: typeof SheetgenRouteRoute
+    }
+    '/sheetgen/cyberpunk': {
+      id: '/sheetgen/cyberpunk'
+      path: '/cyberpunk'
+      fullPath: '/sheetgen/cyberpunk'
+      preLoaderRoute: typeof SheetgenCyberpunkRouteImport
+      parentRoute: typeof SheetgenRouteRoute
     }
     '/products/$id/': {
       id: '/products/$id/'
@@ -179,9 +279,28 @@ const ProductsRouteRouteWithChildren = ProductsRouteRoute._addFileChildren(
   ProductsRouteRouteChildren,
 )
 
+interface SheetgenRouteRouteChildren {
+  SheetgenCyberpunkRoute: typeof SheetgenCyberpunkRoute
+  SheetgenDndRoute: typeof SheetgenDndRoute
+  SheetgenVampireRoute: typeof SheetgenVampireRoute
+  SheetgenIndexRoute: typeof SheetgenIndexRoute
+}
+
+const SheetgenRouteRouteChildren: SheetgenRouteRouteChildren = {
+  SheetgenCyberpunkRoute: SheetgenCyberpunkRoute,
+  SheetgenDndRoute: SheetgenDndRoute,
+  SheetgenVampireRoute: SheetgenVampireRoute,
+  SheetgenIndexRoute: SheetgenIndexRoute,
+}
+
+const SheetgenRouteRouteWithChildren = SheetgenRouteRoute._addFileChildren(
+  SheetgenRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProductsRouteRoute: ProductsRouteRouteWithChildren,
+  SheetgenRouteRoute: SheetgenRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   BlogRoute: BlogRoute,
   ImprintRoute: ImprintRoute,

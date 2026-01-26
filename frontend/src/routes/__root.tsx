@@ -15,6 +15,7 @@ function RootComponent() {
               <Link to="/blog">Blog</Link>
               <Link to="/imprint">Imprint</Link>
               <Link to="/products">Products</Link>
+              <Link to="/sheetgen">Sheet Generator</Link>
             </div>
         </div>
         <div className="flex-1">
