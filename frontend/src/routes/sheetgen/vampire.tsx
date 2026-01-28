@@ -3,10 +3,46 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { createFileRoute } from '@tanstack/react-router'
 import { Circle, CircleSmall } from 'lucide-react'
+import React from 'react'
 
 export const Route = createFileRoute('/sheetgen/vampire')({
   component: RouteComponent,
 })
+type Skill = "Strength" | "Dexterity" | "Stamina" | "Charisma" | "Manipulation" | "Composure" | "Intelligence" | "Wits" | "Resolve"
+function Points({
+  skill
+}:{
+  skill: Skill
+}){
+  const [rating, setRating] = React.useState<number>(0) // 0..5
+  const [hover, setHover] = React.useState<number>(0)
+  const shown = hover || rating
+  return (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: 5 }, (_, i) => {
+        const value = i + 1
+        const filled = value <= shown
+
+        return (
+          <button
+            key={value}
+            type="button"
+            aria-label={`Rate ${value} star${value > 1 ? "s" : ""}`}
+            onClick={() => setRating(value)}
+            onMouseEnter={() => setHover(value)}
+            onMouseLeave={() => setHover(0)}
+            className="p-0.5"
+          >
+            {filled ? <Circle className="text-red-900 stroke-4"/>: 
+              <CircleSmall className="text-muted-foreground"/>
+            }
+            
+          </button>
+        )
+      })}
+    </div>
+  );
+}
 
 function RouteComponent() {
   return <div className="flex-col h-full w-full space-x-4 pt-4">
@@ -33,16 +69,17 @@ function RouteComponent() {
         <div className="space-y-4">
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Strength</Label>
-            <Circle/><Circle/><Circle/><Circle/><CircleSmall className="text-muted-foreground"/>
+            <Points skill="Strength"></Points>
+            
           </div>
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Dexterity</Label>
-            <Circle/><Circle/><CircleSmall className="text-muted-foreground"/><CircleSmall className="text-muted-foreground"/><CircleSmall className="text-muted-foreground"/>
-          </div>
+            <Points skill="Dexterity"></Points>
+            </div>
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Stamina</Label>
-            <Circle/><Circle/><Circle/><Circle/><CircleSmall className="text-muted-foreground"/>
-          </div>
+            <Points skill="Stamina"></Points>
+            </div>
         </div>
       </div>
       <div className="py-8 h-full"><Separator orientation='vertical' className="bg-red-900 pt-4"/></div>
@@ -51,15 +88,15 @@ function RouteComponent() {
         <div className="space-y-4">
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Charisma</Label>
-            <Circle/><Circle/><Circle/><Circle/><CircleSmall className="text-muted-foreground"/>
+            <Points skill="Charisma"></Points>
           </div>
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Manipulation</Label>
-            <Circle/><Circle/><CircleSmall className="text-muted-foreground"/><CircleSmall className="text-muted-foreground"/><CircleSmall className="text-muted-foreground"/>
+            <Points skill="Manipulation"></Points>
           </div>
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Composure</Label>
-            <Circle/><Circle/><Circle/><Circle/><CircleSmall className="text-muted-foreground"/>
+            <Points skill="Composure"></Points>
           </div>
         </div>
       </div>
@@ -69,15 +106,15 @@ function RouteComponent() {
         <div className="space-y-4">
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Intelligence</Label>
-            <Circle/><Circle/><Circle/><Circle/><CircleSmall className="text-muted-foreground"/>
+            <Points skill="Intelligence"></Points>
           </div>
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Wits</Label>
-            <Circle/><Circle/><CircleSmall className="text-muted-foreground"/><CircleSmall className="text-muted-foreground"/><CircleSmall className="text-muted-foreground"/>
+            <Points skill="Wits"></Points>  
           </div>
           <div className="flex space-x-1">
             <Label className="pr-3 w-1/3">Resolve</Label>
-            <Circle/><Circle/><Circle/><Circle/><CircleSmall className="text-muted-foreground"/>
+            <Points skill="Resolve"></Points>
           </div>
         </div>
       </div>
