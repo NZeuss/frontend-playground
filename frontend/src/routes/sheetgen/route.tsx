@@ -26,6 +26,12 @@ function RouteComponent() {
                 <CardDescription className="text-center">5th Edition</CardDescription>
             </Card>
         </Link>
+      <Link to="/sheetgen/dnd2" className="block w-full h-full">
+        <Card className="h-32 flex-col">
+          <CardHeader className="text-center">DND 2</CardHeader>
+          <CardDescription className="text-center">5th Edition</CardDescription>
+        </Card>
+      </Link>
     </div>
     <div className="flex flex-col h-full">
         <Outlet />

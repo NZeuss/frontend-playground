@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SheetgenIndexRouteImport } from './routes/sheetgen/index'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as SheetgenVampireRouteImport } from './routes/sheetgen/vampire'
+import { Route as SheetgenDnd2RouteImport } from './routes/sheetgen/dnd2'
 import { Route as SheetgenDndRouteImport } from './routes/sheetgen/dnd'
 import { Route as SheetgenCyberpunkRouteImport } from './routes/sheetgen/cyberpunk'
 import { Route as ProductsIdIndexRouteImport } from './routes/products/$id/index'
@@ -67,6 +68,11 @@ const SheetgenVampireRoute = SheetgenVampireRouteImport.update({
   path: '/vampire',
   getParentRoute: () => SheetgenRouteRoute,
 } as any)
+const SheetgenDnd2Route = SheetgenDnd2RouteImport.update({
+  id: '/dnd2',
+  path: '/dnd2',
+  getParentRoute: () => SheetgenRouteRoute,
+} as any)
 const SheetgenDndRoute = SheetgenDndRouteImport.update({
   id: '/dnd',
   path: '/dnd',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/imprint': typeof ImprintRoute
   '/sheetgen/cyberpunk': typeof SheetgenCyberpunkRoute
   '/sheetgen/dnd': typeof SheetgenDndRoute
+  '/sheetgen/dnd2': typeof SheetgenDnd2Route
   '/sheetgen/vampire': typeof SheetgenVampireRoute
   '/products/': typeof ProductsIndexRoute
   '/sheetgen/': typeof SheetgenIndexRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/imprint': typeof ImprintRoute
   '/sheetgen/cyberpunk': typeof SheetgenCyberpunkRoute
   '/sheetgen/dnd': typeof SheetgenDndRoute
+  '/sheetgen/dnd2': typeof SheetgenDnd2Route
   '/sheetgen/vampire': typeof SheetgenVampireRoute
   '/products': typeof ProductsIndexRoute
   '/sheetgen': typeof SheetgenIndexRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/imprint': typeof ImprintRoute
   '/sheetgen/cyberpunk': typeof SheetgenCyberpunkRoute
   '/sheetgen/dnd': typeof SheetgenDndRoute
+  '/sheetgen/dnd2': typeof SheetgenDnd2Route
   '/sheetgen/vampire': typeof SheetgenVampireRoute
   '/products/': typeof ProductsIndexRoute
   '/sheetgen/': typeof SheetgenIndexRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/imprint'
     | '/sheetgen/cyberpunk'
     | '/sheetgen/dnd'
+    | '/sheetgen/dnd2'
     | '/sheetgen/vampire'
     | '/products/'
     | '/sheetgen/'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/imprint'
     | '/sheetgen/cyberpunk'
     | '/sheetgen/dnd'
+    | '/sheetgen/dnd2'
     | '/sheetgen/vampire'
     | '/products'
     | '/sheetgen'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/imprint'
     | '/sheetgen/cyberpunk'
     | '/sheetgen/dnd'
+    | '/sheetgen/dnd2'
     | '/sheetgen/vampire'
     | '/products/'
     | '/sheetgen/'
@@ -241,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SheetgenVampireRouteImport
       parentRoute: typeof SheetgenRouteRoute
     }
+    '/sheetgen/dnd2': {
+      id: '/sheetgen/dnd2'
+      path: '/dnd2'
+      fullPath: '/sheetgen/dnd2'
+      preLoaderRoute: typeof SheetgenDnd2RouteImport
+      parentRoute: typeof SheetgenRouteRoute
+    }
     '/sheetgen/dnd': {
       id: '/sheetgen/dnd'
       path: '/dnd'
@@ -282,6 +301,7 @@ const ProductsRouteRouteWithChildren = ProductsRouteRoute._addFileChildren(
 interface SheetgenRouteRouteChildren {
   SheetgenCyberpunkRoute: typeof SheetgenCyberpunkRoute
   SheetgenDndRoute: typeof SheetgenDndRoute
+  SheetgenDnd2Route: typeof SheetgenDnd2Route
   SheetgenVampireRoute: typeof SheetgenVampireRoute
   SheetgenIndexRoute: typeof SheetgenIndexRoute
 }
@@ -289,6 +309,7 @@ interface SheetgenRouteRouteChildren {
 const SheetgenRouteRouteChildren: SheetgenRouteRouteChildren = {
   SheetgenCyberpunkRoute: SheetgenCyberpunkRoute,
   SheetgenDndRoute: SheetgenDndRoute,
+  SheetgenDnd2Route: SheetgenDnd2Route,
   SheetgenVampireRoute: SheetgenVampireRoute,
   SheetgenIndexRoute: SheetgenIndexRoute,
 }

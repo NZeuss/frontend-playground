@@ -18,7 +18,7 @@ function RootComponent() {
               <Link to="/sheetgen">Sheet Generator</Link>
             </div>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 overflow-x-hidden overflow-y-auto">
             <Outlet />
         </div>
     </div>
