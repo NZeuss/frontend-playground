@@ -128,7 +128,7 @@ function AttrSelect({
 function RouteComponent() {
   const [picks, setPicks] = React.useState<(Attr | null)[]>(Array(6).fill(null))
   const [slotValues, setSlotValues] = useState<number[]>([9,12,7,15,13,16]);
-  // const setName = useCharacterSheetStore((s) => s.setName)
+  const setName = useCharacterSheetStore((s) => s.setName)
   const setRace = useCharacterSheetStore((s) => s.setRace)
   const setClass = useCharacterSheetStore((s) => s.setClass)
   const setAlignment = useCharacterSheetStore((s) => s.setAlignment)
@@ -148,7 +148,7 @@ function RouteComponent() {
         <Card>
           <div className="pl-4 space-y-2">
             <CardTitle className="">Name</CardTitle>
-            <Input className="w-2/3" placeholder="Character Name"></Input>
+            <Input className="w-2/3" placeholder="Character Name" value={useCharacterSheetStore((s) => s.sheet.name)} onChange={(e) => setName(e.target.value)}></Input>
             <CardTitle className="">Class</CardTitle>
             <Select onValueChange={(v) => setClass(v as CharacterClass)} value = {useCharacterSheetStore((s) => s.sheet.charClass)}>
               <SelectTrigger className="w-2/3">
