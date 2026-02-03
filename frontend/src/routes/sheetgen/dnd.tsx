@@ -6,10 +6,62 @@ import { Select, SelectTrigger, SelectItem, SelectLabel, SelectContent, SelectGr
 import { createFileRoute } from '@tanstack/react-router'
 import { Shield } from 'lucide-react'
 import React, { useState } from 'react'
+import { useCharacterSheetStore, type CharacterAlignment, type CharacterClass, type CharacterRace} from '@/lib/useAttributePoints'
 
 export const Route = createFileRoute('/sheetgen/dnd')({
   component: RouteComponent,
 })
+
+export const CHARACTER_ATTRIBUTES = [
+  "strength",
+  "dexterity",
+  "constitution",
+  "intelligence",
+  "wisdom",
+  "charisma",
+] as const
+
+export const CHARACTER_CLASSES = [
+  "barbarian",
+  "bard",
+  "cleric",
+  "druid",
+  "fighter",
+  "monk",
+  "paladin",
+  "ranger",
+  "rogue",
+  "sorcerer",
+  "warlock",
+  "wizard",
+] as const
+
+export const CHARACTER_ALIGNMENTS = [
+  "lawful good",
+  "neutral good",
+  "chaotic good",
+  "lawful neutral",
+  "neutral",
+  "chaotic neutral",
+  "lawful evil",
+  "neutral evil",
+  "chaotic evil",
+] as const
+
+export const CHARACTER_RACES = [
+  "dwarf",
+  "elf",
+  "halfling",
+  "human",
+  "dragonborn",
+  "gnome",
+  "half-elf",
+  "half-orc",
+  "tiefling",
+] as const
+
+export const titleCase = (s: string) =>
+  s.replace(/\b\w/g, (c) => c.toUpperCase())
 
 type Attr = "STR" | "DEX" | "CON" | "INT" | "WIS" | "CHA"
 const ATTRS: Attr[] = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
@@ -76,12 +128,18 @@ function AttrSelect({
 function RouteComponent() {
   const [picks, setPicks] = React.useState<(Attr | null)[]>(Array(6).fill(null))
   const [slotValues, setSlotValues] = useState<number[]>([9,12,7,15,13,16]);
-  const [strValue, setStrValue] = useState(9);
-  const [dexValue, setDexValue] = useState(12);
-  const [conValue, setConValue] = useState(7);
-  const [intValue, setIntValue] = useState(15);
-  const [wisValue, setWisValue] = useState(13);
-  const [chaValue, setChaValue] = useState(16);
+  // const setName = useCharacterSheetStore((s) => s.setName)
+  const setRace = useCharacterSheetStore((s) => s.setRace)
+  const setClass = useCharacterSheetStore((s) => s.setClass)
+  const setAlignment = useCharacterSheetStore((s) => s.setAlignment)
+  const str = useCharacterSheetStore((s) => s.sheet.defaultAttributes.strength)
+  const dex = useCharacterSheetStore((s) => s.sheet.defaultAttributes.dexterity)
+  const con = useCharacterSheetStore((s) => s.sheet.defaultAttributes.constitution)
+  const int = useCharacterSheetStore((s) => s.sheet.defaultAttributes.intelligence)
+  const wis = useCharacterSheetStore((s) => s.sheet.defaultAttributes.wisdom)
+  const cha = useCharacterSheetStore((s) => s.sheet.defaultAttributes.charisma)
+
+  const setAttribute = useCharacterSheetStore((s) => s.setAttribute)
 
   return <div className="flex-col h-full pt-4">
     <div className="text-center text-2xl">Dungeons & Dragons</div>
@@ -92,51 +150,50 @@ function RouteComponent() {
             <CardTitle className="">Name</CardTitle>
             <Input className="w-2/3" placeholder="Character Name"></Input>
             <CardTitle className="">Class</CardTitle>
-            <Select>
+            <Select onValueChange={(v) => setClass(v as CharacterClass)} value = {useCharacterSheetStore((s) => s.sheet.charClass)}>
               <SelectTrigger className="w-2/3">
                 <SelectValue placeholder="Select a class" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Classes</SelectLabel>
-                  <SelectItem value="barbarian">Barbarian</SelectItem>
-                  <SelectItem value="bard">Bard</SelectItem>
-                  <SelectItem value="cleric">Cleric</SelectItem>
-                  <SelectItem value="druid">Druid</SelectItem>
-                  <SelectItem value="fighter">Fighter</SelectItem>
-                  <SelectItem value="monk">Monk</SelectItem>
-                  <SelectItem value="paladin">Paladin</SelectItem>
-                  <SelectItem value="ranger">Ranger</SelectItem>
-                  <SelectItem value="rogue">Rogue</SelectItem>
-                  <SelectItem value="sorcerer">Sorcerer</SelectItem>
-                  <SelectItem value="warlock">Warlock</SelectItem>
-                  <SelectItem value="wizard">Wizard</SelectItem>
+                  {CHARACTER_CLASSES.map((a) => (
+                    <SelectItem key={a} value={a}>
+                      {titleCase(a)}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
             <CardTitle className="">Race</CardTitle>
-            <Select>
+            <Select onValueChange={(v) => setRace(v as CharacterRace)} value = {useCharacterSheetStore((s) => s.sheet.race)}>
               <SelectTrigger className="w-2/3">
                 <SelectValue placeholder="Select a race" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Races</SelectLabel>
-                  <SelectItem value="elf">Elf</SelectItem>
-                  <SelectItem value="human">Human</SelectItem>
+                  {CHARACTER_RACES.map((a) => (
+                    <SelectItem key={a} value={a}>
+                      {titleCase(a)}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
             <CardTitle className="">Alignment</CardTitle>
-            <Select>
+            <Select onValueChange={(v) => setAlignment(v as CharacterAlignment)} value = {useCharacterSheetStore((s) => s.sheet.alignment)}>
               <SelectTrigger className="w-2/3">
                 <SelectValue placeholder="Select an alignment" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Alignments</SelectLabel>
-                  <SelectItem value="chaoticEvil">Chaotic Evil</SelectItem>
-                  <SelectItem value="neutral">Neutral</SelectItem>
+                  {CHARACTER_ALIGNMENTS.map((a) => (
+                    <SelectItem key={a} value={a}>
+                      {titleCase(a)}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -160,7 +217,10 @@ function RouteComponent() {
               <Label className="w-1/2">-1</Label>
               <Label className="w-1/2">30 ft</Label>
             </div>
-
+          </div>
+          <div className="w-full flex space-x-16 justify-center">
+            <Button onClick={useCharacterSheetStore((s) => s.reset)}>Reset</Button>
+            <Button>Save</Button>
           </div>
         </Card>
       </div>
@@ -168,43 +228,43 @@ function RouteComponent() {
         <Card className="h-1/8 w-1/2 min-w-22">
           <CardTitle className="px-4 h-1/3">STR</CardTitle>
           <CardHeader className="inline-flex h-full">
-            <CardTitle className="w-1/2">{strValue}</CardTitle>
-            <CardDescription className="w-1/2">{formatModifier(strValue)}</CardDescription>
+            <CardTitle className="w-1/2">{str}</CardTitle>
+            <CardDescription className="w-1/2">{formatModifier(str)}</CardDescription>
           </CardHeader>
         </Card>
         <Card className="h-1/8 w-1/2 min-w-22">
           <CardTitle className="px-4 h-1/3">DEX</CardTitle>
           <CardHeader className="inline-flex h-full">
-            <CardTitle className="w-1/2">{dexValue}</CardTitle>
-            <CardDescription className="w-1/2">{formatModifier(dexValue)}</CardDescription>
+            <CardTitle className="w-1/2">{dex}</CardTitle>
+            <CardDescription className="w-1/2">{formatModifier(dex)}</CardDescription>
           </CardHeader>
         </Card>
         <Card className="h-1/8 w-1/2 min-w-22">
           <CardTitle className="px-4 h-1/3">CON</CardTitle>
           <CardHeader className="inline-flex h-full">
-            <CardTitle className="w-1/2">{conValue}</CardTitle>
-            <CardDescription className="w-1/2">{formatModifier(conValue)}</CardDescription>
+            <CardTitle className="w-1/2">{con}</CardTitle>
+            <CardDescription className="w-1/2">{formatModifier(con)}</CardDescription>
           </CardHeader>
         </Card>
         <Card className="h-1/8 w-1/2 min-w-22">
           <CardTitle className="px-4 h-1/3">INT</CardTitle>
           <CardHeader className="inline-flex h-full">
-            <CardTitle className="w-1/2">{intValue}</CardTitle>
-            <CardDescription className="w-1/2">{formatModifier(intValue)}</CardDescription>
+            <CardTitle className="w-1/2">{int}</CardTitle>
+            <CardDescription className="w-1/2">{formatModifier(int)}</CardDescription>
           </CardHeader>
         </Card>
         <Card className="h-1/8 w-1/2 min-w-22">
           <CardTitle className="px-4 h-1/3">WIS</CardTitle>
           <CardHeader className="inline-flex h-full">
-            <CardTitle className="w-1/2">{wisValue}</CardTitle>
-            <CardDescription className="w-1/2">{formatModifier(wisValue)}</CardDescription>
+            <CardTitle className="w-1/2">{wis}</CardTitle>
+            <CardDescription className="w-1/2">{formatModifier(wis)}</CardDescription>
           </CardHeader>
         </Card>
         <Card className="h-1/8 w-1/2 min-w-22">
           <CardTitle className="px-4 h-1/3">CHA</CardTitle>
           <CardHeader className="inline-flex h-full">
-            <CardTitle className="w-1/2">{chaValue}</CardTitle>
-            <CardDescription className="w-1/2">{formatModifier(chaValue)}</CardDescription>
+            <CardTitle className="w-1/2">{cha}</CardTitle>
+            <CardDescription className="w-1/2">{formatModifier(cha)}</CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -234,12 +294,13 @@ function RouteComponent() {
           <Label className="text-4xl text-right w-8">{slotValues[5]}</Label>
           <AttrSelect slot={5} picks={picks} setPicks={setPicks} />
         </div>
-        <Button onClick={() => {setStrValue(slotValues[slotOfAttr(picks,"STR")])
-            setDexValue(slotValues[slotOfAttr(picks,"DEX")])
-            setConValue(slotValues[slotOfAttr(picks,"CON")])
-            setIntValue(slotValues[slotOfAttr(picks,"INT")])
-            setWisValue(slotValues[slotOfAttr(picks,"WIS")])
-            setChaValue(slotValues[slotOfAttr(picks,"CHA")])
+        <Button onClick={() => {
+            setAttribute("strength", slotValues[slotOfAttr(picks,"STR")])
+            setAttribute("dexterity", slotValues[slotOfAttr(picks, "DEX")])
+            setAttribute("constitution",slotValues[slotOfAttr(picks,"CON")])
+            setAttribute("intelligence",slotValues[slotOfAttr(picks,"INT")])
+            setAttribute("wisdom",slotValues[slotOfAttr(picks,"WIS")])
+            setAttribute("charisma",slotValues[slotOfAttr(picks,"CHA")])
           }
         }
         >Set Attributes</Button>
