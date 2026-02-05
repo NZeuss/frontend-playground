@@ -4,9 +4,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectItem, SelectLabel, SelectContent, SelectGroup, SelectValue } from '@/components/ui/select'
 import { createFileRoute } from '@tanstack/react-router'
-import { Shield } from 'lucide-react'
+import { Minus, Plus, Shield } from 'lucide-react'
 import React, { useState } from 'react'
-import { useCharacterSheetStore, type CharacterAlignment, type CharacterClass, type CharacterRace} from '@/lib/useAttributePoints'
+import { useCharacterSheetStore, type AttributeMethod, type CharacterAlignment, type CharacterClass, type CharacterRace} from '@/lib/useAttributePoints'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { ButtonGroup } from '@/components/ui/button-group'
 
 export const Route = createFileRoute('/sheetgen/dnd')({
   component: RouteComponent,
@@ -61,20 +63,14 @@ export const CHARACTER_RACES = [
 ] as const
 
 export const titleCase = (s: string) =>
-  s.replace(/\b\w/g, (c) => c.toUpperCase())
+  s.replace(/\b\w/g, (c: string) => c.toUpperCase())
+
 
 type Attr = "STR" | "DEX" | "CON" | "INT" | "WIS" | "CHA"
 const ATTRS: Attr[] = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
 const CLEAR = "__clear__"
 
 type Slot = 0 | 1 | 2 | 3 | 4 | 5
-
-
-function slotOfAttr(picks: (Attr | null)[], attr: Attr): number {
-  const i = picks.indexOf(attr)
-  if (i === -1) throw new Error(`${attr} not selected`)
-  return i
-}
 
 function formatModifier(score: number): string {
   const mod = Math.floor((score - 10) / 2)
@@ -125,6 +121,47 @@ function AttrSelect({
   )
 }
 
+function PointBuyUI() {
+  const scores = useCharacterSheetStore((s) => s.sheet.attributeDraft.pointbuy)
+  const remaining = useCharacterSheetStore((s) => s.getPointBuyRemaining())
+  const inc = useCharacterSheetStore((s) => s.incPointBuy)
+  const dec = useCharacterSheetStore((s) => s.decPointBuy)
+  const apply = useCharacterSheetStore((s) => s.applyPointBuyToAttributes)
+
+  return (
+    <div className="space-y-4">
+      <div className="font-bold">Points: {remaining} of 27</div>
+
+      {CHARACTER_ATTRIBUTES.map((a) => {
+        const val = scores[a]
+        return (
+          <div key={a} className="w-full grid grid-cols-[1fr_1fr_auto] items-center gap-4">
+            <div className="justify-self-end">{titleCase(a)}:</div>
+
+            <div className="justify-self-center grid grid-cols-2 gap-4 items-baseline">
+              <Label className="text-4xl text-right w-8">{val}</Label>
+              <Label className="text-1xl text-right w-8 text-muted-foreground">
+                {formatModifier(val)}
+              </Label>
+            </div>
+
+            <ButtonGroup>
+              <Button variant="outline" size="icon" onClick={() => inc(a)}>
+                <Plus />
+              </Button>
+              <Button variant="outline" size="icon" onClick={() => dec(a)}>
+                <Minus />
+              </Button>
+            </ButtonGroup>
+          </div>
+        )
+      })}
+
+      <Button onClick={apply}>Apply Point Buy</Button>
+    </div>
+  )
+}
+
 function RouteComponent() {
   const [picks, setPicks] = React.useState<(Attr | null)[]>(Array(6).fill(null))
   const [slotValues, setSlotValues] = useState<number[]>([9,12,7,15,13,16]);
@@ -132,6 +169,10 @@ function RouteComponent() {
   const setRace = useCharacterSheetStore((s) => s.setRace)
   const setClass = useCharacterSheetStore((s) => s.setClass)
   const setAlignment = useCharacterSheetStore((s) => s.setAlignment)
+  const setAttributeMethod = useCharacterSheetStore((s) => s.setAttributeMethod)
+ 
+
+  const method = useCharacterSheetStore((s) => s.sheet.attributeMethod)
   const str = useCharacterSheetStore((s) => s.sheet.defaultAttributes.strength)
   const dex = useCharacterSheetStore((s) => s.sheet.defaultAttributes.dexterity)
   const con = useCharacterSheetStore((s) => s.sheet.defaultAttributes.constitution)
@@ -269,7 +310,48 @@ function RouteComponent() {
         </Card>
       </div>
       <div className="w-1/2 flex-col text-center space-y-4">
-        <Button className="">Roll Dice</Button>
+        <ToggleGroup className="w-full justify-center" variant="outline" type="single" value = {method} onValueChange={(v) => setAttributeMethod(v as AttributeMethod)}>
+          <ToggleGroupItem value="roll" aria-label="Toggle roll">
+            Roll
+          </ToggleGroupItem>
+          <ToggleGroupItem value="pointbuy" aria-label="Toggle point buy">
+            Point Buy
+          </ToggleGroupItem>
+        </ToggleGroup>
+        {method === "roll" ? (
+      <>
+        <Button className="justify-center">Roll Dice</Button>
+
+        {slotValues.map((v, i) => (
+          <div key={i} className="flex space-x-16 justify-center">
+            <Label className="text-4xl text-right w-8">{v}</Label>
+            <AttrSelect slot={i as Slot} picks={picks} setPicks={setPicks} />
+          </div>
+        ))}
+
+        <Button
+          onClick={() => {
+            const slotOfAttr = (attr: string) => picks.findIndex((p) => p === attr)
+            const get = (attr: string) => {
+              const idx = slotOfAttr(attr)
+              return idx >= 0 ? slotValues[idx] : 10
+            }
+
+            setAttribute("strength", get("STR"))
+            setAttribute("dexterity", get("DEX"))
+            setAttribute("constitution", get("CON"))
+            setAttribute("intelligence", get("INT"))
+            setAttribute("wisdom", get("WIS"))
+            setAttribute("charisma", get("CHA"))
+          }}
+        >
+          Set Attributes
+        </Button>
+      </>
+)  : (
+      <PointBuyUI/>
+)}
+        {/* <Button className="justify-center">Roll Dice</Button>
         <div className="flex space-x-16 justify-center">
           <Label className="text-4xl text-right w-8">{slotValues[0]}</Label>
           <AttrSelect slot={0} picks={picks} setPicks={setPicks} />
@@ -303,10 +385,9 @@ function RouteComponent() {
             setAttribute("charisma",slotValues[slotOfAttr(picks,"CHA")])
           }
         }
-        >Set Attributes</Button>
+        >Set Attributes</Button> */}
       </div>
     </div>
-
   </div>
 }
 
